@@ -1,0 +1,54 @@
+.TH MTAIL "1" "May 2008" "mtail " "User Commands"
+.SH NAME
+mtail \- tail variant designed for web developers monitoring logfiles
+.SH SYNOPSIS
+.B mtail
+[\fIoptions\fR]  \fI<file>\fR...
+.SH DESCRIPTION
+.PP
+MonkeyTail allows a user to tail multiple files on both local and remote hosts
+and clearly marks inactivity by putting 5 newlines in the output whenever a
+pause in output over 3 seconds is detected.
+.PP
+MonkeyTail is implemented a fairly simple wrapper script around standard tail,
+ssh, and sudo.
+.SH OPTIONS
+
+.TP
+\fB\-q\fR
+Quiet mode
+.TP
+\fB\-\-quiet\fR
+"    "
+.TP
+<file>...
+Files to tail.
+.IP
+These can specified in the following ways:
+.TP
+@<groupname>
+\- expands the group (from .mtailrc) to a list of
+.IP
+files to tail
+.TP
+<filename>
+\- tails a local file.
+.TP
++<filename>              \- attempts to sudo and tail a local file (will
+prompt for pwd if required).
+.TP
+<remotehost>:<filename>
+\- attempts to invoke tail via ssh on a remote
+.IP
+host.
+.TP
++<remotehost>:<filename> \- attempts to invoke sudo tail via ssh on a
+remote host (will prompt for pwd if required).
+.SH "SEE ALSO"
+.PP
+.BR mtailrc (5),
+.BR tail (1)
+.SH AUTHOR
+.PP
+Martyn Smith <martyn@dollyfish.net.nz>
+

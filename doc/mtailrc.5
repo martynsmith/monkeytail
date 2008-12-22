@@ -1,0 +1,64 @@
+.TH mtailrc "5" "May 2008" mtail "User Manuals"
+.SH NAME
+mtailrc \- Configuration file for monkeytail
+.SH DESCRIPTION
+.PP
+A monkeytail configuration uses Apache-style syntax to declare "groups" of
+files to be tailed.
+.PP
+Best explained with an example:
+.PP
+    <group testgroup>
+        prefix 'server2: '
+        sudo yes
+        <file>
+            filename /var/log/apache2/access.log
+            prefix 'server1: '
+            host server1.example.com
+        </file>
+        <file>
+            filename /var/log/apache2/access.log
+            host server2.example.com
+            sudo no
+        </file>
+    </group>
+.SH OPTIONS
+All options can be either
+.PP
+.nf
+\fBfilename\fP filename
+.fi
+.IP
+\fBfilename\fP defines the filename for this block.
+.PP
+.nf
+\fBhost\fP remote-host (optional)
+.fi
+.IP
+\fBhost\fP defines that this block's file is to be tailed on a remote server.
+.PP
+.nf
+\fBsudo\fP yes|no|1|0
+.fi
+.IP
+\fBsudo\fP is a boolean specifying whether this file should be tailed as root.
+This option is supported for both local and remote files (in both cases you
+will potentially be prompted for your password).
+.PP
+.nf
+\fBprefix\fP "string: "
+.fi
+.IP
+\fBprefix\fP allows you to specify a short string that will be prepended to
+every line that is displayed for that given file.
+.SH FILES
+.PP
+~/.mtailrc - user specific monkeytail config
+.SH "SEE ALSO"
+.PP
+.BR mtail (1),
+.BR tail (1)
+.SH AUTHOR
+.PP
+Martyn Smith <martyn@dollyfish.net.nz>
+
