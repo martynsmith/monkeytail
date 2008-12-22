@@ -1,3 +1,9 @@
+monkeytail (0.3.2-1) unstable; urgency=low
+
+  * New upstream release (closes: #497501, #500976, #500977)
+
+ -- Martyn Smith <martyn@catalyst.net.nz>  Mon, 22 Dec 2008 13:51:28 +1300
+
 monkeytail (0.3.0-1) unstable; urgency=low
 
   * Initial release (closes:#484358)

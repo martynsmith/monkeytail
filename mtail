@@ -33,6 +33,9 @@ my $args = Getopt::Declare->new(q(
     -q                 	Quiet mode
     --quiet            	[ditto]
 
+    -n<N>              	Output the last N lines of each file before tailing
+                        (defaults to 10)
+
     <file>...          	Files to tail, see --help for how to specify sudo
                         /remote files or groups [required]
 
@@ -54,6 +57,10 @@ my $args = Getopt::Declare->new(q(
 ));
 
 exit 1 unless defined $args;
+
+$args->{'-n'} = 10 unless defined $args->{'-n'};
+
+exit 2 unless $args->{'-n'} =~ m{ \A \d+ \z }xms;
 
 my $io_select = IO::Select->new();
 my %info_for = ();
@@ -90,7 +97,7 @@ sub add_cli_files {#{{{
     my $files = shift;
 
     foreach my $file ( @$files ) {
-        if ( $file =~ m{ \A (\+)? (.*) : (.*) \z }xms ) {
+        if ( $file =~ m{ \A (\+)? (.*) : (.*) \z }xms and not -f $file ) {
             my $info = {
                 sudo     => $1,
                 host     => $2,
@@ -108,7 +115,12 @@ sub add_cli_files {#{{{
                 filename => $2,
                 mode     => 'cli',
             };
-            add_file($info);
+            if ( -f $info->{filename} ) {
+                add_file($info);
+            }
+            else {
+                print STDERR "Skipping non-existant file $info->{filename}\n";
+            }
         }
     }
 }#}}}
@@ -172,18 +184,18 @@ sub add_file {
 
     if ( $file->{host} ) {
         if ( $file->{sudo} ) {
-            open $fh, '-|', 'ssh', '-q', $file->{host}, 'sudo', 'tail', '-n' => '0', '-f', $file->{filename};
+            open $fh, '-|', 'ssh', '-q', $file->{host}, 'sudo', 'tail', '-n' => $args->{'-n'}, '-f', $file->{filename};
         }
         else {
-            open $fh, '-|', 'ssh', '-q', $file->{host}, 'tail', '-n' => '0', '-f', $file->{filename};
+            open $fh, '-|', 'ssh', '-q', $file->{host}, 'tail', '-n' => $args->{'-n'}, '-f', $file->{filename};
         }
     }
     else {
         if ( $file->{sudo} ) {
-            open $fh, '-|', 'sudo', 'tail', '-n' => '0', '-f', $file->{filename};
+            open $fh, '-|', 'sudo', 'tail', '-n' => $args->{'-n'}, '-f', $file->{filename};
         }
         else {
-            open $fh, '-|', 'tail', '-n' => '0', '-f', $file->{filename};
+            open $fh, '-|', 'tail', '-n' => $args->{'-n'}, '-f', $file->{filename};
         }
     }
 
